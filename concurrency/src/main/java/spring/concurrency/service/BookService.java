@@ -33,4 +33,23 @@ public class BookService {
         book.load(quantity);
     }
 
+
+    /*@Transactional
+    public void purchase(final Long bookId,final long quantity){
+        RLock lock = redissonClient.getLock(String.format("purchase:book:%d", bookId));
+        try {
+            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
+            if (!available) {
+                System.out.println("redisson getLock timeout");
+                return;
+            }
+            Book book = bookRepository.findById(bookId)
+                    .orElseThrow(IllegalArgumentException::new);
+            book.purchase(quantity);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+    }*/
 }

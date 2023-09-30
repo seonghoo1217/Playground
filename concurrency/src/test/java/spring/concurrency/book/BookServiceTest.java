@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import spring.concurrency.entity.Book;
 import spring.concurrency.entity.Stock;
 import spring.concurrency.repo.BookRepository;
+import spring.concurrency.service.BookLockFacade;
 import spring.concurrency.service.BookService;
 
 import java.util.concurrent.CountDownLatch;
@@ -22,6 +23,9 @@ public class BookServiceTest {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private BookLockFacade bookLockFacade;
 
     @Test
     void 동시에_100명이_책을_구매한다() throws InterruptedException {
@@ -69,5 +73,29 @@ public class BookServiceTest {
                 .orElseThrow();
 
         assertThat(actual.getStock().getRemain()).isEqualTo(100);
+    }
+
+    @Test
+    void 동시에_100명이_책을_구매한다_분산락사용() throws InterruptedException {
+        Long bookId = bookRepository.save(new Book("이펙티브 자바", 36_000, new Stock(100)))
+                .getId();
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        CountDownLatch countDownLatch = new CountDownLatch(100);
+
+        for (int i = 0; i < 100; i++) {
+            executorService.submit(() -> {
+                try {
+                    bookLockFacade.purchase(bookId, 1);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        countDownLatch.await();
+        Book actual = bookRepository.findById(bookId)
+                .orElseThrow();
+
+        assertThat(actual.getStock().getRemain()).isZero();
     }
 }
