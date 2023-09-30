@@ -27,4 +27,11 @@ public class Stock {
         }
         remain -= quantity;
     }
+
+    public void increase(final long quantity){
+        if ((remain+quantity)>2147483647){
+            throw new IllegalArgumentException();
+        }
+        remain+=quantity;
+    }
 }

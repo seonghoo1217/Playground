@@ -31,4 +31,8 @@ public class Book {
     public void purchase(final long quantity) {
         stock.decrease(quantity);
     }
+
+    public void load(final long quantity){
+        stock.increase(quantity);
+    }
 }
