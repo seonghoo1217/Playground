@@ -27,6 +27,13 @@ public class BookService {
     }
 
     @Transactional
+    public synchronized void syncPurchase(final Long bookId, final long quantity) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(IllegalArgumentException::new);
+        book.purchase(quantity);
+    }
+
+    @Transactional
     public void load(final Long bookId, final long quantity) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(IllegalArgumentException::new);

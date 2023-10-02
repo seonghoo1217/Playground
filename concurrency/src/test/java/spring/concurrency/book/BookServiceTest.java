@@ -98,4 +98,28 @@ public class BookServiceTest {
 
         assertThat(actual.getStock().getRemain()).isZero();
     }
+
+    @Test
+    void 동시에_책_재고_100개_synchronized() throws InterruptedException {
+        Long bookId = bookRepository.save(new Book("객체지향의 사실과 오해", 18000, new Stock(100)))
+                .getId();
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        CountDownLatch countDownLatch = new CountDownLatch(100);
+
+        for (int i = 0; i < 100; i++) {
+            executorService.submit(() -> {
+                try {
+                    bookService.syncPurchase(bookId, 1);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        countDownLatch.await();
+        Book actual = bookRepository.findById(bookId)
+                .orElseThrow();
+
+        assertThat(actual.getStock().getRemain()).isZero();
+    }
 }
