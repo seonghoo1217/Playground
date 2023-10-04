@@ -21,3 +21,10 @@
 
 ## Synchronized 주의사항
 - 스프링 트랜잭션 매커니즘 상 AOP 동작방식 프록시를 통해서 메서드를 직접 호출하기에 트랜잭션의 커밋 시점이 메서드 호출 후이고  synchronized 키워드를 사용하더라도 데이터베이스 커밋 이전에 다음 쓰레드가 접근이 가능하기 때문에 테스트가 실패
+
+## Pessimistic Lock 구현사항
+- 기존 JPA Repository를 이용하여 `LockType`을 별도로 지정하여 구현한다.
+
+## Optimistic Lock 구현사항
+- pessimistic lock을 구현할 때와 마찬가지로 LockType을 별도로 지정하여 구현하나, Entity에 식별자값이 될수 있는 필드값과 `@Version` 어노테이션을 통해 별도로 관리
+- Optimistic Lock의 경우 Application Level에서 실행되므로 만약, Tracsaction이 동시에 값을 수정,삽입하는 경우를 대비하여 Rollback이나, Re-Try하는 기준을 지정해주어야함
