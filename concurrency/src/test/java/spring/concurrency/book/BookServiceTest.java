@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import spring.concurrency.entity.Book;
 import spring.concurrency.entity.Stock;
 import spring.concurrency.repo.BookRepository;
-import spring.concurrency.service.BookLockFacade;
+import spring.concurrency.facade.BookLockFacade;
 import spring.concurrency.service.BookService;
 
 import java.util.concurrent.CountDownLatch;

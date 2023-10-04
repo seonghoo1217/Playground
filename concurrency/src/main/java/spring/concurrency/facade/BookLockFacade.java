@@ -1,9 +1,10 @@
-package spring.concurrency.service;
+package spring.concurrency.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import spring.concurrency.service.BookService;
 
 import java.util.concurrent.TimeUnit;
 

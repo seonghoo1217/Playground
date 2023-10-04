@@ -22,6 +22,9 @@ public class Book {
     @JoinColumn(name = "stock_id", nullable = false)
     private Stock stock;
 
+    @Version
+    private Long version;
+
     public Book(final String name, final int price, final Stock stock) {
         this.name = name;
         this.price = price;
