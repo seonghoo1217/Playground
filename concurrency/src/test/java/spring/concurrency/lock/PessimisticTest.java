@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import spring.concurrency.entity.Book;
 import spring.concurrency.entity.Stock;
 import spring.concurrency.repo.BookRepository;
+import spring.concurrency.service.BookPessimisticService;
 import spring.concurrency.service.BookService;
 
 import java.util.concurrent.CountDownLatch;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PessimisticTest {
 
     @Autowired
-    private BookService bookService;
+    private BookPessimisticService bookService;
 
     @Autowired
     private BookRepository bookRepository;

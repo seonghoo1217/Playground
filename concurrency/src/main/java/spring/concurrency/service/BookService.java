@@ -40,12 +40,6 @@ public class BookService {
         book.load(quantity);
     }
 
-    @Transactional
-    public void purchaseByPessimisticLock(final Long bookId,final long quantity){
-        Book book = bookRepository.findByWithPessimisticLock(bookId);
-        book.purchase(quantity);
-    }
-
 
     /*@Transactional
     public void purchase(final Long bookId,final long quantity){
