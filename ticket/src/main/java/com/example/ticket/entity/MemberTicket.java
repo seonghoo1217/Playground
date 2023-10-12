@@ -20,6 +20,6 @@ public class MemberTicket {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 }
