@@ -31,4 +31,14 @@ public class Member {
     private Integer age;
 
     private String address;
+
+
+    public Member(UUID uuid, String email, String nickname, String password, Integer age, String address) {
+        this.uuid = uuid;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.age = age;
+        this.address = address;
+    }
 }
