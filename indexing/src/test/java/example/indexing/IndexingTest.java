@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StopWatch;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class IndexingTest {
     }
 
     @Test
-    public void basicSelect() {
+    public void indexFullScan() {
         //given
         String targetEmail = "test59000@eamil.com";
 
@@ -35,6 +36,21 @@ public class IndexingTest {
 
         stopWatch.start();
         Member findMember = memberRepository.findAllByEmail(targetEmail);
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
+        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
+        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+    }
+
+    @Test
+    public void tableFullScan() {
+        String targetEmail = "test59000@eamil.com";
+
+        StopWatch stopWatch = new StopWatch("Table Full Scan");
+
+        stopWatch.start();
+        Optional<Member> findMember = memberRepository.findAll().stream().filter(member -> member.getEmail().equals(targetEmail)).findFirst();
         stopWatch.stop();
 
         System.out.println(stopWatch.prettyPrint());
