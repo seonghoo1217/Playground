@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,9 +17,6 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true)
-    private UUID uuid;
 
     @Column(unique = true)
     private String email;
@@ -32,9 +30,11 @@ public class Member {
 
     private String address;
 
+    @OneToMany
+    private List<Post> posts = new ArrayList<>();
 
-    public Member(UUID uuid, String email, String nickname, String password, Integer age, String address) {
-        this.uuid = uuid;
+
+    public Member(String email, String nickname, String password, Integer age, String address) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
