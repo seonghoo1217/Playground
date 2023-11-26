@@ -11,14 +11,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "post",
-        indexes = {
-                @Index(name = "post_title", columnList = "title"),
-                @Index(name = "post_category", columnList = "category"),
-                @Index(name = "post_uuid_title", columnList = "uuid,title")
-        })
-public class Post {
-
+public class Posting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
