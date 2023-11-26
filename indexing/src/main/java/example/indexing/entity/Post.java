@@ -29,4 +29,14 @@ public class Post {
     private String title;
 
     private String category;
+
+    @ManyToOne
+    private Member member;
+
+    public Post(UUID uuid, String title, String category, Member member) {
+        this.uuid = uuid;
+        this.title = title;
+        this.category = category;
+        this.member = member;
+    }
 }

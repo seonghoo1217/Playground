@@ -12,6 +12,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(
+        name = "member",
+        uniqueConstraints = {@UniqueConstraint(name = "unique_nickname_email", columnNames = {"nickname", "email"})}
+)
 public class Member {
 
     @Id

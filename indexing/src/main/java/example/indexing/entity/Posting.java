@@ -22,4 +22,10 @@ public class Posting {
     private String title;
 
     private String category;
+
+    public Posting(UUID uuid, String title, String category) {
+        this.uuid = uuid;
+        this.title = title;
+        this.category = category;
+    }
 }
