@@ -88,4 +88,20 @@ public class IndexingTest {
         System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
         System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
     }
+
+    @Test
+    public void uniqueIndexScanCombine() {
+        String targetEmail = "test59000@eamil.com";
+        String targetNickName = "testuser59000";
+
+        StopWatch stopWatch = new StopWatch("Unique Index Scan Combine");
+
+        stopWatch.start();
+        Member member = memberRepository.findByEmailAndNickname(targetEmail, targetNickName);
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
+        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
+        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+    }
 }
