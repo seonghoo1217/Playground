@@ -104,4 +104,35 @@ public class IndexingTest {
         System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
         System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
     }
+
+    @Test
+    public void postBasicIndexScan() {
+        String targetTitle = "test post59000";
+        StopWatch stopWatch = new StopWatch("Basic Index Scan");
+
+        stopWatch.start();
+        Post byTitle = postRepository.findByTitle(targetTitle);
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
+        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
+        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+    }
+
+    @Test
+    public void postUniqueIndexScan() {
+        String targetUUID = "9b7a53f4-6406-414a-9f68-fb7af56b221a";
+        UUID targetUuid = UUID.fromString(targetUUID);
+
+        StopWatch stopWatch = new StopWatch("Post Unique Index Scan");
+
+        stopWatch.start();
+        Post post = postRepository.findByUuid(targetUuid);
+        stopWatch.stop();
+
+        System.out.println(stopWatch.prettyPrint());
+        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
+        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+
+    }
 }
