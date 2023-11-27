@@ -9,12 +9,13 @@ import example.indexing.repo.PostingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StopWatch;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 @SpringBootTest
 public class IndexingTest {
@@ -28,6 +29,9 @@ public class IndexingTest {
     @Autowired
     private PostingRepository postingRepository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private List<String> categories = List.of("자유", "유머", "연애", "고민");
 
     private final Random random = new Random();
@@ -39,42 +43,45 @@ public class IndexingTest {
         initializePosting();
     }
 
-    public void initializeMember() {
-        Random random = new Random();
+    public List<Member> initializeMember() {
+        List<Member> members = new ArrayList<>();
         for (int i = 1; i <= 100000; i++) {
-            Member member = new Member("test" + i + "@eamil.com", "testuser" + i, "1234", random.nextInt(61) + 20, "서울시 중앙" + i + "동");
-            memberRepository.save(member);
+            members.add(new Member("test" + i + "@eamil.com", "testuser" + i, "1234", random.nextInt(61) + 20, "서울시 중앙" + i + "동"));
         }
+        return members;
     }
 
-    private void initializePost() {
+    private List<Post> initializePost() {
         StopWatch stopWatch = new StopWatch("Post Index 데이터 삽입 시간 기록");
+        List<Post> posts = new ArrayList<>();
 
         stopWatch.start();
         for (int i = 1; i <= 100000; i++) {
             String category = categories.get(random.nextInt(4));
             Member member = memberRepository.findById((long) i).get();
-            Post post = new Post(UUID.randomUUID(), "test post" + i, category, member);
-            postRepository.save(post);
+            posts.add(new Post(UUID.randomUUID(), "test post" + i, category, member));
         }
         stopWatch.stop();
 
         stopWatchRecordPrint(stopWatch);
+        return posts;
     }
 
-    private void initializePosting() {
+    private List<Posting> initializePosting() {
         StopWatch stopWatch = new StopWatch("Postingx 데이터 삽입 시간 기록");
+        List<Posting> postings = new ArrayList<>();
 
         stopWatch.start();
         for (int i = 1; i <= 100000; i++) {
             String category = categories.get(random.nextInt(4));
             Member member = memberRepository.findById((long) i).get();
-            Posting posting = new Posting(UUID.randomUUID(), "test post" + i, category, member);
-            postingRepository.save(posting);
+            postings.add(new Posting(UUID.randomUUID(), "test post" + i, category, member));
         }
         stopWatch.stop();
 
         stopWatchRecordPrint(stopWatch);
+
+        return postings;
     }
 
     @Test
@@ -169,5 +176,67 @@ public class IndexingTest {
         System.out.println(stopWatch.prettyPrint());
         System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
         System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+    }
+
+    private void dummyMemberBatchInsert() {
+        List<Member> members = initializeMember();
+        List<Posting> postings = initializePosting();
+        String memberSql = "INSERT INTO member(email, nickname, password, age, address) VALUES (?,?,?,?,?)";
+        jdbcTemplate.batchUpdate(memberSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, members.get(i).getEmail());
+                ps.setString(2, members.get(i).getNickname());
+                ps.setString(3, members.get(i).getPassword());
+                ps.setInt(4, members.get(i).getAge());
+                ps.setString(5, members.get(i).getAddress());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return members.size();
+            }
+        });
+    }
+
+
+    private void dummyPostBatchInsert() {
+        List<Post> posts = initializePost();
+
+        String postSql = "INSERT INTO post(uuid, title, category, member_id) VALUES (?,?,?,?)";
+        jdbcTemplate.batchUpdate(postSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, posts.get(i).getUuid().toString());
+                ps.setString(2, posts.get(i).getTitle());
+                ps.setString(3, posts.get(i).getCategory());
+                ps.setLong(4, posts.get(i).getMember().getId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return posts.size();
+            }
+        });
+    }
+
+    private void dummyPostingBatchInsert() {
+        List<Posting> postings = initializePosting();
+
+        String postingSql = "INSERT INTO post(uuid, title, category, member_id) VALUES (?,?,?,?)";
+        jdbcTemplate.batchUpdate(postingSql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, postings.get(i).getUuid().toString());
+                ps.setString(2, postings.get(i).getTitle());
+                ps.setString(3, postings.get(i).getCategory());
+                ps.setLong(4, postings.get(i).getMember().getId());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return postings.size();
+            }
+        });
     }
 }
