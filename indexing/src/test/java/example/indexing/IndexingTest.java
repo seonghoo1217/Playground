@@ -38,9 +38,9 @@ public class IndexingTest {
 
     @Test
     public void initializeData() {
-        initializeMember();
-        initializePost();
-        initializePosting();
+        dummyMemberBatchInsert();
+        dummyPostBatchInsert();
+        dummyPostingBatchInsert();
     }
 
     public List<Member> initializeMember() {
@@ -180,7 +180,6 @@ public class IndexingTest {
 
     private void dummyMemberBatchInsert() {
         List<Member> members = initializeMember();
-        List<Posting> postings = initializePosting();
         String memberSql = "INSERT INTO member(email, nickname, password, age, address) VALUES (?,?,?,?,?)";
         jdbcTemplate.batchUpdate(memberSql, new BatchPreparedStatementSetter() {
             @Override
@@ -202,7 +201,9 @@ public class IndexingTest {
 
     private void dummyPostBatchInsert() {
         List<Post> posts = initializePost();
+        StopWatch stopWatch = new StopWatch("post bulk insert");
 
+        stopWatch.start();
         String postSql = "INSERT INTO post(uuid, title, category, member_id) VALUES (?,?,?,?)";
         jdbcTemplate.batchUpdate(postSql, new BatchPreparedStatementSetter() {
             @Override
@@ -218,11 +219,15 @@ public class IndexingTest {
                 return posts.size();
             }
         });
+        stopWatch.stop();
+        stopWatchRecordPrint(stopWatch);
     }
 
     private void dummyPostingBatchInsert() {
         List<Posting> postings = initializePosting();
+        StopWatch stopWatch = new StopWatch("posting bulk insert");
 
+        stopWatch.start();
         String postingSql = "INSERT INTO post(uuid, title, category, member_id) VALUES (?,?,?,?)";
         jdbcTemplate.batchUpdate(postingSql, new BatchPreparedStatementSetter() {
             @Override
@@ -238,5 +243,8 @@ public class IndexingTest {
                 return postings.size();
             }
         });
+        stopWatch.stop();
+
+        stopWatchRecordPrint(stopWatch);
     }
 }
