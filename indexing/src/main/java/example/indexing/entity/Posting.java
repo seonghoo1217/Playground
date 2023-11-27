@@ -23,9 +23,13 @@ public class Posting {
 
     private String category;
 
-    public Posting(UUID uuid, String title, String category) {
+    @ManyToOne
+    private Member member;
+
+    public Posting(UUID uuid, String title, String category, Member member) {
         this.uuid = uuid;
         this.title = title;
         this.category = category;
+        this.member = member;
     }
 }

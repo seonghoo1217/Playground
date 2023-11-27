@@ -15,7 +15,7 @@ import java.util.UUID;
         indexes = {
                 @Index(name = "post_title", columnList = "title"),
                 @Index(name = "post_category", columnList = "category"),
-                @Index(name = "post_uuid_title", columnList = "uuid,title")
+                @Index(name = "post_title_category", columnList = "title,category")
         })
 public class Post {
 

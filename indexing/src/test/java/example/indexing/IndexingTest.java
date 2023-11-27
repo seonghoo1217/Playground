@@ -2,8 +2,10 @@ package example.indexing;
 
 import example.indexing.entity.Member;
 import example.indexing.entity.Post;
+import example.indexing.entity.Posting;
 import example.indexing.repo.MemberRepository;
 import example.indexing.repo.PostRepository;
+import example.indexing.repo.PostingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,24 +25,56 @@ public class IndexingTest {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private PostingRepository postingRepository;
+
     private List<String> categories = List.of("자유", "유머", "연애", "고민");
 
     private final Random random = new Random();
 
     @Test
-    public void initializeDataSet() {
+    public void initializeData() {
+        initializeMember();
+        initializePost();
+        initializePosting();
+    }
+
+    public void initializeMember() {
         Random random = new Random();
         for (int i = 1; i <= 100000; i++) {
             Member member = new Member("test" + i + "@eamil.com", "testuser" + i, "1234", random.nextInt(61) + 20, "서울시 중앙" + i + "동");
-            Member saveMember = memberRepository.save(member);
-            initializePost(saveMember, i);
+            memberRepository.save(member);
         }
     }
 
-    private void initializePost(Member member, int i) {
-        String category = categories.get(random.nextInt(4));
-        Post post = new Post(UUID.randomUUID(), "test post" + i, category, member);
-        postRepository.save(post);
+    private void initializePost() {
+        StopWatch stopWatch = new StopWatch("Post Index 데이터 삽입 시간 기록");
+
+        stopWatch.start();
+        for (int i = 1; i <= 100000; i++) {
+            String category = categories.get(random.nextInt(4));
+            Member member = memberRepository.findById((long) i).get();
+            Post post = new Post(UUID.randomUUID(), "test post" + i, category, member);
+            postRepository.save(post);
+        }
+        stopWatch.stop();
+
+        stopWatchRecordPrint(stopWatch);
+    }
+
+    private void initializePosting() {
+        StopWatch stopWatch = new StopWatch("Postingx 데이터 삽입 시간 기록");
+
+        stopWatch.start();
+        for (int i = 1; i <= 100000; i++) {
+            String category = categories.get(random.nextInt(4));
+            Member member = memberRepository.findById((long) i).get();
+            Posting posting = new Posting(UUID.randomUUID(), "test post" + i, category, member);
+            postingRepository.save(posting);
+        }
+        stopWatch.stop();
+
+        stopWatchRecordPrint(stopWatch);
     }
 
     @Test
@@ -69,9 +103,7 @@ public class IndexingTest {
         Optional<Member> findMember = memberRepository.findAll().stream().filter(member -> member.getEmail().equals(targetEmail)).findFirst();
         stopWatch.stop();
 
-        System.out.println(stopWatch.prettyPrint());
-        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
-        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+        stopWatchRecordPrint(stopWatch);
     }
 
     @Test
@@ -84,9 +116,7 @@ public class IndexingTest {
         Member byEmail = memberRepository.findByEmail(targetEmail);
         stopWatch.stop();
 
-        System.out.println(stopWatch.prettyPrint());
-        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
-        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+        stopWatchRecordPrint(stopWatch);
     }
 
     @Test
@@ -100,9 +130,7 @@ public class IndexingTest {
         Member member = memberRepository.findByEmailAndNickname(targetEmail, targetNickName);
         stopWatch.stop();
 
-        System.out.println(stopWatch.prettyPrint());
-        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
-        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+        stopWatchRecordPrint(stopWatch);
     }
 
     @Test
@@ -114,9 +142,7 @@ public class IndexingTest {
         Post byTitle = postRepository.findByTitle(targetTitle);
         stopWatch.stop();
 
-        System.out.println(stopWatch.prettyPrint());
-        System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
-        System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
+        stopWatchRecordPrint(stopWatch);
     }
 
     @Test
@@ -130,9 +156,18 @@ public class IndexingTest {
         Post post = postRepository.findByUuid(targetUuid);
         stopWatch.stop();
 
+        stopWatchRecordPrint(stopWatch);
+    }
+
+
+    @Test
+    public void postUniqueIndex() {
+
+    }
+
+    private void stopWatchRecordPrint(StopWatch stopWatch) {
         System.out.println(stopWatch.prettyPrint());
         System.out.println("마지막 작업 걸린 시간 : " + stopWatch.getTotalTimeNanos());
         System.out.println("totalTimeSeconds : " + stopWatch.getTotalTimeSeconds());
-
     }
 }

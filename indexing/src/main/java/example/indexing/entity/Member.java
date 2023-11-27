@@ -37,6 +37,9 @@ public class Member {
     @OneToMany
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany
+    private List<Posting> postings = new ArrayList<>();
+
 
     public Member(String email, String nickname, String password, Integer age, String address) {
         this.email = email;
