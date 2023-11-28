@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StopWatch;
 
+import java.nio.ByteBuffer;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -39,6 +40,12 @@ public class IndexingTest {
     @Test
     public void initializeData() {
         dummyMemberBatchInsert();
+        dummyPostBatchInsert();
+        dummyPostingBatchInsert();
+    }
+
+    @Test
+    public void dummyPostAndPosting() {
         dummyPostBatchInsert();
         dummyPostingBatchInsert();
     }
@@ -168,8 +175,14 @@ public class IndexingTest {
 
 
     @Test
-    public void postUniqueIndex() {
+    public void basicIndexCombineCompareToPostAndPosting() {
+        String targetTitle = "test post59000";
+        String targetCategory = "";
 
+        StopWatch stopWatch = new StopWatch("USE INDEX SELECT");
+
+        stopWatch.start();
+//        postingRepository.findByTitleAndCategory(targetTitle)
     }
 
     private void stopWatchRecordPrint(StopWatch stopWatch) {
@@ -208,7 +221,7 @@ public class IndexingTest {
         jdbcTemplate.batchUpdate(postSql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setString(1, posts.get(i).getUuid().toString());
+                ps.setBytes(1, toBytes(posts.get(i).getUuid()));
                 ps.setString(2, posts.get(i).getTitle());
                 ps.setString(3, posts.get(i).getCategory());
                 ps.setLong(4, posts.get(i).getMember().getId());
@@ -232,7 +245,7 @@ public class IndexingTest {
         jdbcTemplate.batchUpdate(postingSql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setString(1, postings.get(i).getUuid().toString());
+                ps.setBytes(1, toBytes(postings.get(i).getUuid()));
                 ps.setString(2, postings.get(i).getTitle());
                 ps.setString(3, postings.get(i).getCategory());
                 ps.setLong(4, postings.get(i).getMember().getId());
@@ -246,5 +259,12 @@ public class IndexingTest {
         stopWatch.stop();
 
         stopWatchRecordPrint(stopWatch);
+    }
+
+    private byte[] toBytes(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return bb.array();
     }
 }

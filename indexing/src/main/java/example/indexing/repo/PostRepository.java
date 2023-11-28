@@ -9,4 +9,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Post findByTitle(String title);
 
     Post findByUuid(UUID uuid);
+
+    Post findByTitleAndCategory(String title, String category);
 }
