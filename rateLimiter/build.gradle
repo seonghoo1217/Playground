@@ -29,6 +29,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'com.bucket4j:bucket4j-core:8.3.0'
     implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot2:1.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-aop:2.7.2'
 }
 
 tasks.named('test') {
