@@ -8,11 +8,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @Log4j2
+@RequestMapping("/bucket")
 public class BucketTestController {
 
     /*
@@ -48,7 +50,7 @@ public class BucketTestController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }*/
 
-    @GetMapping("/api/bucket")
+    @GetMapping("/api/test")
     public ResponseEntity<?> bucketAccess(HttpServletRequest request) {
         Bucket bucket = bucketService.resolveBucket(request);
         log.info("접근 IP = {}", request.getRemoteAddr());
