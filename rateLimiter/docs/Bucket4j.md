@@ -11,3 +11,5 @@
     - 박싱 / 언박싱 과정을 최소화
 
 <img width="883" alt="스크린샷 2023-12-30 오후 11 06 55" src="https://github.com/seonghoo1217/playground/assets/39437170/153c7821-ead7-49f9-b43f-f2d0ad58fc00">
+
+이전에 `RateLimitJ`라는 라이브러리를 지원하였으나 현재는 업데이트 중단되어 bucket4j사용 권장
