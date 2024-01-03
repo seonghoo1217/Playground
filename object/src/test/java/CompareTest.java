@@ -35,7 +35,7 @@ public class CompareTest {
         final Integer number2 = 2024;
 
         //when
-        final boolean areEqual = number1 == number2;
+        final boolean areEqual = (number1 == number2);
 
         //then
         assertEquals(areEqual, false);
@@ -51,5 +51,18 @@ public class CompareTest {
 
         assertEquals(System.identityHashCode(test1), System.identityHashCode(test2));
         assertNotEquals(System.identityHashCode(test3), System.identityHashCode(test4));
+    }
+
+    @Test
+    void basicCompareInteger() {
+        // given
+        final Integer number1 = 100;  // before : 2000
+        final Integer number2 = 100;  // before : 2000
+
+        // when
+        final boolean areEqual = (number1 == number2);
+
+        // then
+        assertEquals(areEqual, true);
     }
 }
