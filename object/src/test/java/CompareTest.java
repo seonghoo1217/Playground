@@ -2,6 +2,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class CompareTest {
 
@@ -38,5 +39,17 @@ public class CompareTest {
 
         //then
         assertEquals(areEqual, false);
+    }
+
+    @Test
+    @DisplayName("문자열 참조 비교")
+    void compareString() {
+        String test1 = "testString";
+        String test2 = "testString";
+        String test3 = new String("testString");
+        String test4 = new String("testString");
+
+        assertEquals(System.identityHashCode(test1), System.identityHashCode(test2));
+        assertNotEquals(System.identityHashCode(test3), System.identityHashCode(test4));
     }
 }
