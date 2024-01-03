@@ -25,4 +25,18 @@ public class CompareTest {
         assertEquals(areEqual2, true);
         assertEquals(areEqual3, true);
     }
+
+    @Test
+    @DisplayName("정수형 참조 비교")
+    void compareInteger() {
+        //given
+        final Integer number1 = 2024;
+        final Integer number2 = 2024;
+
+        //when
+        final boolean areEqual = number1 == number2;
+
+        //then
+        assertEquals(areEqual, false);
+    }
 }
