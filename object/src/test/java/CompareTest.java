@@ -58,7 +58,7 @@ public class CompareTest {
         // given
         final Integer number1 = 100;  // before : 2000
         final Integer number2 = 100;  // before : 2000
-
+        
         // when
         final boolean areEqual = (number1 == number2);
 
